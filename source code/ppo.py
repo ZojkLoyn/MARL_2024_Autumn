@@ -1,3 +1,10 @@
+'''
+训练策略
+参考自 pytorch 文档 https://pytorch.org/rl/stable/tutorials/multiagent_ppo.html
+'''
+
+__all__ = ["CPPO", "MAPPO", "IPPO", "HetIPPO"]
+
 import config
 import torch
 
@@ -27,6 +34,8 @@ class PPO:
             env,
             RewardSum(in_keys=[env.reward_key], out_keys=[("agents", "episode_reward")]),
         )
+        
+        # 决策网络
         policy_net = torch.nn.Sequential(
             MultiAgentMLP(
                 n_agent_inputs=env.observation_spec[
@@ -34,8 +43,8 @@ class PPO:
                 n_agent_outputs=2 *
                 env.action_spec.shape[-1],  # 2 * n_actions_per_agents
                 n_agents=env.n_agents,
-                centralised=self.__class__.policy_net_centralised,
-                share_params=self.__class__.share_params,
+                centralised=self.policy_net_centralised,
+                share_params=self.share_params,
                 device=config.device,
                 depth=2,
                 num_cells=256,
@@ -63,12 +72,13 @@ class PPO:
             log_prob_key=("agents", "sample_log_prob"),
         )  # we'll need the log-prob for the PPO loss
         
+        # 评论家网络
         critic_net = MultiAgentMLP(
             n_agent_inputs=env.observation_spec["agents", "observation"].shape[-1],
             n_agent_outputs=1,  # 1 value per agent
             n_agents=env.n_agents,
-            centralised=self.__class__.critic_net_centralised,
-            share_params=self.__class__.share_params,
+            centralised=self.critic_net_centralised,
+            share_params=self.share_params,
             device=config.device,
             depth=2,
             num_cells=256,
@@ -201,6 +211,7 @@ class PPO:
 class CPPO(PPO):
     policy_net_centralised = True
     critic_net_centralised = True
+    share_params = False
 
 class MAPPO(PPO):
     policy_net_centralised = False
