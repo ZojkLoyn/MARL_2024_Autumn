@@ -1,16 +1,18 @@
+import config
 import ppo
+import time
 
 if __name__ == '__main__':
-    net = ppo.CPPO()
-    net.train()
-    while True:
-        import config
-        import torch
-        with torch.no_grad():
-            net.env.rollout(
-                max_steps=1000,
-                policy=net.policy,
-                callback=lambda env, _: env.render(),
-                auto_cast_to_device=True,
-                break_when_any_done=False,
-            )
+    ppo = ppo.get_ppo(critic_net_load=config.load, policy_net_load=config.load)
+    if config.render:
+        total_rewards = []
+    for ep in range(config.train_epochs):
+        if config.train:
+            ppo.train()
+            ppo.save()
+        if config.render:
+            rewards = ppo.render(record=True, record_path=f"videos/{time.time()}.mp4")
+            total_rewards.append(rewards)
+    
+    if config.render:
+        print(total_rewards)

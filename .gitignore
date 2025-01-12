@@ -4,4 +4,6 @@ __pycache__/
 *$py.class
 
 # 草稿
-*.md
+report/
+
+_o*
