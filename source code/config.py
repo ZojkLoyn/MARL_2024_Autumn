@@ -25,8 +25,8 @@ device = (
 vmas_device = device  # The device where the simulator is run (VMAS can run on GPU)
 
 # Sampling
-frames_per_batch = 6_0000  # Number of team frames collected per training iteration
-n_iters = 100  # Number of sampling and training iterations
+frames_per_batch = 2_0000  # Number of team frames collected per training iteration
+n_iters = 1000  # Number of sampling and training iterations
 total_frames = frames_per_batch * n_iters
 
 # Training
@@ -41,7 +41,7 @@ gamma = 0.99  # discount factor
 lmbda = 0.9  # lambda for generalised advantage estimation
 entropy_eps = 1e-4  # coefficient of the entropy term in the PPO loss
 
-max_steps = 1000  # Episode steps before done
+max_steps = 500  # Episode steps before done
 num_vmas_envs = (
     frames_per_batch // max_steps
 )  # Number of vectorized envs. frames_per_batch should be divisible by this number

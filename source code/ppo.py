@@ -50,6 +50,7 @@ class PPO:
                 num_cells=256,
                 activation_class=torch.nn.Tanh,
             ),
+            torch.nn.Hardtanh(),
             NormalParamExtractor(
             ),  # this will just separate the last dimension into two outputs: a loc and a non-negative scale
         )
@@ -195,7 +196,7 @@ class PPO:
         plt.plot(episode_reward_mean_list)
         plt.xlabel("Training iterations")
         plt.ylabel("Reward")
-        plt.title("Episode reward mean")
+        plt.title("CPPO" + " Episode reward mean")
         plt.show()
             
     def rendering(self):
